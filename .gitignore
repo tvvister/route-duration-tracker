@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Build and coverage output
+dist/
+build/
+coverage/
+.next/
+out/
+
+# Logs and runtime files
+*.log
+*.pid
+
+# Local IDE and OS files
+.DS_Store
+.idea/
+.vscode/
+
+# Python tooling (if used by supporting scripts)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
