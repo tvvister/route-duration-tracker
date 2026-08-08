@@ -5,11 +5,9 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
-
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
 button { font: inherit; }
-
 .page-shell { min-height: 100vh; padding: 72px 6vw 96px; background: radial-gradient(circle at 85% 10%, #25443d 0, transparent 34%), #111918; }
 .hero { max-width: 760px; margin: 0 auto 48px; text-align: center; }
 .eyebrow { margin: 0 0 14px; color: #a7c8a1; font-size: 11px; font-weight: 800; letter-spacing: .18em; }
@@ -21,13 +19,12 @@ h1 { margin-bottom: 18px; color: #f7f4ed; font-family: Georgia, serif; font-size
 .map-toolbar { position: absolute; z-index: 2; top: 31px; left: 32px; right: 32px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
 .map-label { padding: 8px 12px; border-radius: 99px; background: #f7f4ed; color: #193129; font-size: 12px; font-weight: 800; }
 .map-status { color: #e6ede4; font-size: 12px; text-shadow: 0 1px 3px #000; }
-.map-placeholder { position: relative; display: grid; width: 100%; height: 100%; min-height: 520px; place-items: center; overflow: hidden; border: 0; border-radius: 20px; background: #bbcfb3; cursor: crosshair; }
-.map-grid { position: absolute; inset: 0; opacity: .65; background-image: linear-gradient(28deg, transparent 47%, #78977b 48%, #78977b 49%, transparent 50%), linear-gradient(118deg, transparent 47%, #78977b 48%, #78977b 49%, transparent 50%), linear-gradient(#d2dfc9 1px, transparent 1px), linear-gradient(90deg, #d2dfc9 1px, transparent 1px); background-size: 150px 110px, 190px 160px, 34px 34px, 34px 34px; }
-.map-instruction { position: relative; align-self: end; margin-bottom: 28px; padding: 10px 16px; border-radius: 99px; background: #17352dd9; color: #f7f4ed; font-size: 13px; }
-.map-pin { position: absolute; z-index: 1; display: grid; width: 40px; height: 40px; place-items: center; border: 4px solid #f7f4ed; border-radius: 50% 50% 50% 0; background: #db7058; color: #fff; font-weight: 800; transform: rotate(-45deg); box-shadow: 0 6px 16px #19312966; }
-.map-pin::first-letter { transform: rotate(45deg); }
-.pin-one { top: 33%; left: 33%; }
-.pin-two { top: 56%; left: 67%; background: #315b51; }
+.map-picker { position: relative; min-height: 520px; overflow: hidden; border-radius: 20px; background: #d9e5d5; }
+.map-canvas { position: absolute; inset: 0; }
+.map-message { position: absolute; z-index: 2; bottom: 22px; left: 50%; max-width: calc(100% - 40px); padding: 10px 16px; border-radius: 99px; background: #17352dd9; color: #f7f4ed; font-size: 13px; text-align: center; transform: translateX(-50%); }
+.map-message-missing-key, .map-message-error { border: 1px solid #f0b5a6; background: #fff3ef; color: #8e4436; }
+.map-marker { display: grid; width: 38px; height: 38px; place-items: center; border: 4px solid #f7f4ed; border-radius: 50% 50% 50% 0; background: #db7058; color: #fff; font-size: 14px; font-weight: 800; transform: translate(-50%, -100%) rotate(-45deg); box-shadow: 0 6px 16px #19312966; }
+.map-marker-destination { background: #315b51; }
 .route-panel { display: flex; flex-direction: column; gap: 30px; padding: 48px 38px; background: #f7f4ed; color: #1a2925; }
 .route-panel .eyebrow { color: #6c8d6c; }
 h2 { margin-bottom: 0; font-family: Georgia, serif; font-size: 38px; font-weight: 400; letter-spacing: -.04em; line-height: 1; }
@@ -41,10 +38,9 @@ h2 { margin-bottom: 0; font-family: Georgia, serif; font-size: 38px; font-weight
 .primary-button:disabled { background: #c8cec3; cursor: not-allowed; }
 .share-box { display: grid; gap: 8px; padding: 14px; border-radius: 12px; background: #e5eddf; color: #315b51; font-size: 12px; }
 .share-box code { overflow-wrap: anywhere; color: #1a2925; font-size: 11px; }
-
 @media (max-width: 800px) {
   .page-shell { padding: 44px 16px 60px; }
   .workspace { grid-template-columns: 1fr; }
-  .map-placeholder { min-height: 380px; }
+  .map-picker { min-height: 380px; }
   .route-panel { padding: 32px 24px; }
 }

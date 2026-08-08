@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { MapPicker } from './components/MapPicker'
 import type { Point, RouteDraft } from './types'
 
 const formatPoint = (point: Point | null) => {
@@ -40,19 +41,9 @@ export function App() {
         <div className="map-card">
           <div className="map-toolbar">
             <span className="map-label">Map picker</span>
-            <span className="map-status">Yandex Maps integration next</span>
+            <span className="map-status">Yandex Maps</span>
           </div>
-          <button
-            className="map-placeholder"
-            type="button"
-            onClick={() => choosePoint({ latitude: 55.75124, longitude: 37.61842 })}
-            aria-label="Select a point on the map"
-          >
-            <span className="map-grid" />
-            <span className="map-pin pin-one">1</span>
-            <span className="map-pin pin-two">2</span>
-            <span className="map-instruction">Click to place {selection === 'origin' ? 'point 1' : 'point 2'}</span>
-          </button>
+          <MapPicker selection={selection} origin={draft.origin} destination={draft.destination} onSelect={choosePoint} />
         </div>
 
         <aside className="route-panel">

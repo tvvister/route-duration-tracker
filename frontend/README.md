@@ -12,4 +12,4 @@ cp .env.example .env
 npm run dev
 ```
 
-The current screen is an intentionally small MVP shell. The map panel uses a clickable placeholder so the route-selection flow can be developed before wiring in the Yandex Maps SDK. The next integration step is to replace `map-placeholder` in `src/App.tsx` with the provider map and send the selected coordinates to the backend API.
+The map picker now loads Yandex Maps JavaScript API v3 when VITE_YANDEX_MAPS_API_KEY is configured, accepts clicks for both points, and displays custom markers.
