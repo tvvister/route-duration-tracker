@@ -1,0 +1,50 @@
+:root {
+  color: #f7f4ed;
+  background: #111918;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button { font: inherit; }
+
+.page-shell { min-height: 100vh; padding: 72px 6vw 96px; background: radial-gradient(circle at 85% 10%, #25443d 0, transparent 34%), #111918; }
+.hero { max-width: 760px; margin: 0 auto 48px; text-align: center; }
+.eyebrow { margin: 0 0 14px; color: #a7c8a1; font-size: 11px; font-weight: 800; letter-spacing: .18em; }
+h1, h2, p { margin-top: 0; }
+h1 { margin-bottom: 18px; color: #f7f4ed; font-family: Georgia, serif; font-size: clamp(42px, 7vw, 82px); font-weight: 400; letter-spacing: -.045em; line-height: .98; }
+.hero-copy { max-width: 560px; margin: auto; color: #afbab2; font-size: 17px; line-height: 1.65; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr); max-width: 1180px; min-height: 560px; margin: 0 auto; overflow: hidden; border: 1px solid #37544b; border-radius: 28px; background: #1a2925; box-shadow: 0 28px 90px #07100d99; }
+.map-card { position: relative; padding: 16px; }
+.map-toolbar { position: absolute; z-index: 2; top: 31px; left: 32px; right: 32px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+.map-label { padding: 8px 12px; border-radius: 99px; background: #f7f4ed; color: #193129; font-size: 12px; font-weight: 800; }
+.map-status { color: #e6ede4; font-size: 12px; text-shadow: 0 1px 3px #000; }
+.map-placeholder { position: relative; display: grid; width: 100%; height: 100%; min-height: 520px; place-items: center; overflow: hidden; border: 0; border-radius: 20px; background: #bbcfb3; cursor: crosshair; }
+.map-grid { position: absolute; inset: 0; opacity: .65; background-image: linear-gradient(28deg, transparent 47%, #78977b 48%, #78977b 49%, transparent 50%), linear-gradient(118deg, transparent 47%, #78977b 48%, #78977b 49%, transparent 50%), linear-gradient(#d2dfc9 1px, transparent 1px), linear-gradient(90deg, #d2dfc9 1px, transparent 1px); background-size: 150px 110px, 190px 160px, 34px 34px, 34px 34px; }
+.map-instruction { position: relative; align-self: end; margin-bottom: 28px; padding: 10px 16px; border-radius: 99px; background: #17352dd9; color: #f7f4ed; font-size: 13px; }
+.map-pin { position: absolute; z-index: 1; display: grid; width: 40px; height: 40px; place-items: center; border: 4px solid #f7f4ed; border-radius: 50% 50% 50% 0; background: #db7058; color: #fff; font-weight: 800; transform: rotate(-45deg); box-shadow: 0 6px 16px #19312966; }
+.map-pin::first-letter { transform: rotate(45deg); }
+.pin-one { top: 33%; left: 33%; }
+.pin-two { top: 56%; left: 67%; background: #315b51; }
+.route-panel { display: flex; flex-direction: column; gap: 30px; padding: 48px 38px; background: #f7f4ed; color: #1a2925; }
+.route-panel .eyebrow { color: #6c8d6c; }
+h2 { margin-bottom: 0; font-family: Georgia, serif; font-size: 38px; font-weight: 400; letter-spacing: -.04em; line-height: 1; }
+.point-list { display: grid; gap: 10px; }
+.point-row { display: flex; width: 100%; gap: 13px; align-items: center; padding: 15px; border: 1px solid #d2d8cc; border-radius: 15px; background: transparent; color: inherit; text-align: left; cursor: pointer; }
+.point-row.selected { border-color: #6c8d6c; background: #e5eddf; }
+.point-number { display: grid; flex: 0 0 30px; height: 30px; place-items: center; border-radius: 50%; background: #315b51; color: #fff; font-size: 13px; font-weight: 800; }
+.point-row strong, .point-row small { display: block; }
+.point-row small { margin-top: 4px; color: #6e7971; font-size: 12px; }
+.primary-button { margin-top: auto; padding: 16px 20px; border: 0; border-radius: 12px; background: #d8664e; color: #fff; font-weight: 800; cursor: pointer; }
+.primary-button:disabled { background: #c8cec3; cursor: not-allowed; }
+.share-box { display: grid; gap: 8px; padding: 14px; border-radius: 12px; background: #e5eddf; color: #315b51; font-size: 12px; }
+.share-box code { overflow-wrap: anywhere; color: #1a2925; font-size: 11px; }
+
+@media (max-width: 800px) {
+  .page-shell { padding: 44px 16px 60px; }
+  .workspace { grid-template-columns: 1fr; }
+  .map-placeholder { min-height: 380px; }
+  .route-panel { padding: 32px 24px; }
+}
