@@ -17,7 +17,10 @@ declare global {
 
   interface GoogleMapsApi {
     maps: {
-      importLibrary(name: string): Promise<any>
+      Map: new (container: HTMLElement, options: Record<string, unknown>) => GoogleMapHandle
+      marker: {
+        AdvancedMarkerElement: new (options: Record<string, unknown>) => GoogleMarkerHandle
+      }
     }
   }
 

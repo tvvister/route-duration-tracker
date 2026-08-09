@@ -41,7 +41,7 @@ export function App() {
         <div className="map-card">
           <div className="map-toolbar">
             <span className="map-label">Map picker</span>
-            <span className="map-status">Yandex Maps</span>
+            <span className="map-status">Google Maps</span>
           </div>
           <MapPicker selection={selection} origin={draft.origin} destination={draft.destination} onSelect={choosePoint} />
         </div>
