@@ -23,7 +23,7 @@ h1 { margin-bottom: 18px; color: #f7f4ed; font-family: Georgia, serif; font-size
 .map-canvas { position: absolute; inset: 0; }
 .map-message { position: absolute; z-index: 2; bottom: 22px; left: 50%; max-width: calc(100% - 40px); padding: 10px 16px; border-radius: 99px; background: #17352dd9; color: #f7f4ed; font-size: 13px; text-align: center; transform: translateX(-50%); }
 .map-message-missing-key, .map-message-error { border: 1px solid #f0b5a6; background: #fff3ef; color: #8e4436; }
-.map-marker { display: grid; width: 38px; height: 38px; place-items: center; border: 4px solid #f7f4ed; border-radius: 50% 50% 50% 0; background: #db7058; color: #fff; font-size: 14px; font-weight: 800; transform: translate(-50%, -100%) rotate(-45deg); box-shadow: 0 6px 16px #19312966; }
+.map-marker { display: grid; width: 38px; height: 38px; place-items: center; border: 4px solid #f7f4ed; border-radius: 50%; background: #db7058; color: #fff; font-size: 14px; font-weight: 800; box-shadow: 0 6px 16px #19312966; }
 .map-marker-destination { background: #315b51; }
 .route-panel { display: flex; flex-direction: column; gap: 30px; padding: 48px 38px; background: #f7f4ed; color: #1a2925; }
 .route-panel .eyebrow { color: #6c8d6c; }
