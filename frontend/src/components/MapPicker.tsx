@@ -132,6 +132,8 @@ export function MapPicker({ selection, origin, destination, onSelect }: MapPicke
         map,
         position: { lat: point.latitude, lng: point.longitude },
         title: variant === 'origin' ? 'Point 1' : 'Point 2',
+        anchorLeft: '-50%',
+        anchorTop: '-100%',
         content: createMarkerContent(label, variant),
       }) as GoogleMarkerHandle
       markersRef.current.push(marker)
