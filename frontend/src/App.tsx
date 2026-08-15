@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MapPicker } from './components/MapPicker'
+import { MapPicker, type RouteSummary } from './components/MapPicker'
 import type { Point, RouteDraft } from './types'
 
 const formatPoint = (point: Point | null) => {
@@ -11,6 +11,9 @@ export function App() {
   const [draft, setDraft] = useState<RouteDraft>({ origin: null, destination: null })
   const [selection, setSelection] = useState<'origin' | 'destination'>('origin')
   const [routeLink, setRouteLink] = useState<string | null>(null)
+  const [routeSummary, setRouteSummary] = useState<RouteSummary | null>(null)
+  const [routeLoading, setRouteLoading] = useState(false)
+  const [routeError, setRouteError] = useState<string | null>(null)
 
   const choosePoint = (point: Point) => {
     setDraft((current) => ({ ...current, [selection]: point }))
@@ -43,7 +46,17 @@ export function App() {
             <span className="map-label">Map picker</span>
             <span className="map-status">Google Maps</span>
           </div>
-          <MapPicker selection={selection} origin={draft.origin} destination={draft.destination} onSelect={choosePoint} />
+          <MapPicker
+            selection={selection}
+            origin={draft.origin}
+            destination={draft.destination}
+            onSelect={choosePoint}
+            onRouteUpdate={(summary, loading, error) => {
+              setRouteSummary(summary)
+              setRouteLoading(loading)
+              setRouteError(error)
+            }}
+          />
         </div>
 
         <aside className="route-panel">
@@ -80,6 +93,16 @@ export function App() {
           <button className="primary-button" type="button" onClick={createRoute} disabled={!draft.origin || !draft.destination}>
             Generate route link
           </button>
+
+          {routeLoading && <div className="route-summary route-summary-loading">Рассчитываем маршрут на машине…</div>}
+          {routeSummary && (
+            <div className="route-summary" role="status">
+              <span>На машине</span>
+              <strong>{routeSummary.duration}</strong>
+              {routeSummary.distance && <small>{routeSummary.distance}</small>}
+            </div>
+          )}
+          {routeError && <div className="route-summary route-summary-error" role="alert">{routeError}</div>}
 
           {routeLink && (
             <div className="share-box" role="status">

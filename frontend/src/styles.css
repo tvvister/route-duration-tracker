@@ -38,6 +38,12 @@ h2 { margin-bottom: 0; font-family: Georgia, serif; font-size: 38px; font-weight
 .primary-button:disabled { background: #c8cec3; cursor: not-allowed; }
 .share-box { display: grid; gap: 8px; padding: 14px; border-radius: 12px; background: #e5eddf; color: #315b51; font-size: 12px; }
 .share-box code { overflow-wrap: anywhere; color: #1a2925; font-size: 11px; }
+.route-summary { display: grid; gap: 4px; padding: 14px; border-radius: 12px; background: #e5eddf; color: #315b51; }
+.route-summary span { font-size: 12px; font-weight: 700; }
+.route-summary strong { color: #1a2925; font-size: 24px; font-weight: 700; }
+.route-summary small { color: #6e7971; font-size: 12px; }
+.route-summary-loading { color: #6e7971; font-size: 13px; }
+.route-summary-error { border: 1px solid #f0b5a6; background: #fff3ef; color: #8e4436; font-size: 12px; line-height: 1.4; }
 @media (max-width: 800px) {
   .page-shell { padding: 44px 16px 60px; }
   .workspace { grid-template-columns: 1fr; }

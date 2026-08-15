@@ -9,6 +9,7 @@ vendor/
 
 # Build and coverage output
 dist/
+*.tsbuildinfo
 build/
 coverage/
 .next/
