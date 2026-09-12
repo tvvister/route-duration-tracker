@@ -30,8 +30,8 @@ From the repository root:
 
 ```bash
 cp .env.example .env
-# Set VITE_GOOGLE_MAPS_API_KEY and a long URL-safe POSTGRES_PASSWORD in .env,
-# then run:
+# Set VITE_GOOGLE_MAPS_API_KEY, GOOGLE_ROUTES_API_KEY, and a long URL-safe
+# POSTGRES_PASSWORD in .env, then run:
 docker compose up --build
 ```
 
@@ -39,3 +39,23 @@ Open `http://localhost:8080`. Compose starts PostgreSQL with a persistent Docker
 volume, waits until it is ready, and then starts the application. The application
 image builds the frontend with Node.js and serves both the API and frontend from
 Python, so Node.js and PostgreSQL do not need to be installed on the host.
+
+The `worker` service records every active route immediately after it starts and
+then at the beginning of every hour (for example, `22:00`, `23:00`, and `00:00`).
+It uses live traffic through Google Routes API and stores successful and failed
+checks in `route_measurements`. Use a separate server-side API key in
+`GOOGLE_ROUTES_API_KEY`; a browser key restricted by HTTP referrer will not work
+for the worker.
+
+Run one measurement cycle manually:
+
+```bash
+docker compose run --rm worker python backend/worker.py --once
+```
+
+Inspect recent measurements:
+
+```bash
+docker compose exec database psql -U route_tracker -d route_duration_tracker \
+  -c "SELECT route_public_id, measured_at, duration_seconds, distance_meters, status, error_code FROM route_measurements ORDER BY measured_at DESC LIMIT 20;"
+```
