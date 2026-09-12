@@ -1,0 +1,33 @@
+services:
+  database:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: route_duration_tracker
+      POSTGRES_USER: route_tracker
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U route_tracker -d route_duration_tracker"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      args:
+        VITE_GOOGLE_MAPS_API_KEY: ${VITE_GOOGLE_MAPS_API_KEY:-}
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://route_tracker:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@database:5432/route_duration_tracker
+      PORT: "8080"
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres-data:

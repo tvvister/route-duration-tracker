@@ -1,6 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MapPicker, type RouteSummary } from './components/MapPicker'
 import type { Point, RouteDraft } from './types'
+
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+const routePathPattern = /^\/routes\/([a-z]+_[a-z]+)$/
+
+type StoredRoute = {
+  publicId: string
+  origin: Point
+  destination: Point
+}
 
 const formatPoint = (point: Point | null) => {
   if (!point) return 'Not selected'
@@ -14,19 +23,55 @@ export function App() {
   const [routeSummary, setRouteSummary] = useState<RouteSummary | null>(null)
   const [routeLoading, setRouteLoading] = useState(false)
   const [routeError, setRouteError] = useState<string | null>(null)
+  const [linkError, setLinkError] = useState<string | null>(null)
+  const [linkLoading, setLinkLoading] = useState(false)
 
   const choosePoint = (point: Point) => {
     setDraft((current) => ({ ...current, [selection]: point }))
     if (selection === 'origin') setSelection('destination')
   }
 
-  const createRoute = () => {
-    if (!draft.origin || !draft.destination) return
-    const params = new URLSearchParams({
-      from: `${draft.origin.latitude},${draft.origin.longitude}`,
-      to: `${draft.destination.latitude},${draft.destination.longitude}`,
-    })
-    setRouteLink(`${window.location.origin}/routes/demo?${params.toString()}`)
+  useEffect(() => {
+    const match = window.location.pathname.match(routePathPattern)
+    if (!match) return
+
+    let cancelled = false
+    fetch(`${API_BASE_URL}/api/routes/${match[1]}`)
+      .then(async (response) => {
+        if (!response.ok) throw new Error((await response.json().catch(() => null))?.error || `HTTP ${response.status}`)
+        return response.json() as Promise<StoredRoute>
+      })
+      .then((route) => {
+        if (cancelled) return
+        setDraft({ origin: route.origin, destination: route.destination })
+        setRouteLink(window.location.href)
+        setSelection('origin')
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) setLinkError(`Не удалось загрузить маршрут: ${error instanceof Error ? error.message : 'неизвестная ошибка'}`)
+      })
+
+    return () => { cancelled = true }
+  }, [])
+
+  const createRoute = async () => {
+    if (!draft.origin || !draft.destination || linkLoading) return
+    setLinkLoading(true)
+    setLinkError(null)
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/routes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin: draft.origin, destination: draft.destination }),
+      })
+      const payload = await response.json().catch(() => null)
+      if (!response.ok) throw new Error(payload?.error || `HTTP ${response.status}`)
+      setRouteLink(`${window.location.origin}/routes/${payload.publicId}`)
+    } catch (error: unknown) {
+      setLinkError(`Не удалось создать ссылку: ${error instanceof Error ? error.message : 'неизвестная ошибка'}`)
+    } finally {
+      setLinkLoading(false)
+    }
   }
 
   return (
@@ -90,8 +135,8 @@ export function App() {
             </button>
           </div>
 
-          <button className="primary-button" type="button" onClick={createRoute} disabled={!draft.origin || !draft.destination}>
-            Generate route link
+          <button className="primary-button" type="button" onClick={createRoute} disabled={!draft.origin || !draft.destination || linkLoading}>
+            {linkLoading ? 'Creating route link…' : 'Generate route link'}
           </button>
 
           {routeLoading && <div className="route-summary route-summary-loading">Рассчитываем маршрут на машине…</div>}
@@ -103,6 +148,7 @@ export function App() {
             </div>
           )}
           {routeError && <div className="route-summary route-summary-error" role="alert">{routeError}</div>}
+          {linkError && <div className="route-summary route-summary-error" role="alert">{linkError}</div>}
 
           {routeLink && (
             <div className="share-box" role="status">
