@@ -15,6 +15,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   app:
+    image: route-duration-tracker:local
     build:
       context: .
       args:
@@ -26,8 +27,27 @@ services:
     environment:
       DATABASE_URL: postgresql://route_tracker:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@database:5432/route_duration_tracker
       PORT: "8080"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/health', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
     ports:
       - "8080:8080"
+
+  worker:
+    image: route-duration-tracker:local
+    command: ["python", "backend/worker.py"]
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://route_tracker:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@database:5432/route_duration_tracker
+      GOOGLE_ROUTES_API_KEY: ${GOOGLE_ROUTES_API_KEY:?Set GOOGLE_ROUTES_API_KEY in .env}
 
 volumes:
   postgres-data:
