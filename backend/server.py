@@ -35,12 +35,14 @@ def utc_now():
 
 
 def public_route(row):
+    last_checked_at = row.get('last_checked_at')
     return {
         'publicId': row['public_id'],
         'origin': {'latitude': row['origin_lat'], 'longitude': row['origin_lng']},
         'destination': {'latitude': row['destination_lat'], 'longitude': row['destination_lng']},
         'createdAt': row['created_at'].isoformat(),
         'lastViewedAt': row['last_viewed_at'].isoformat(),
+        'lastCheckedAt': last_checked_at.isoformat() if last_checked_at else None,
     }
 
 
@@ -74,7 +76,8 @@ def create_route(origin, destination):
             """
             INSERT INTO routes (public_id, origin_lat, origin_lng, destination_lat, destination_lng)
             VALUES (%s, %s, %s, %s, %s)
-            RETURNING public_id, origin_lat, origin_lng, destination_lat, destination_lng, created_at, last_viewed_at
+            RETURNING public_id, origin_lat, origin_lng, destination_lat, destination_lng,
+                      created_at, last_viewed_at, last_checked_at
             """,
             (public_id, origin[0], origin[1], destination[0], destination[1]),
         ).fetchone()
@@ -88,11 +91,38 @@ def get_route(public_id):
             UPDATE routes
             SET last_viewed_at = %s
             WHERE public_id = %s
-            RETURNING public_id, origin_lat, origin_lng, destination_lat, destination_lng, created_at, last_viewed_at
+            RETURNING public_id, origin_lat, origin_lng, destination_lat, destination_lng,
+                      created_at, last_viewed_at, last_checked_at
             """,
             (utc_now(), public_id),
         ).fetchone()
-        return public_route(row) if row else None
+        if not row:
+            return None
+
+        measurements = connection.execute(
+            """
+            SELECT measured_at, duration_seconds, distance_meters
+            FROM (
+                SELECT measured_at, duration_seconds, distance_meters
+                FROM route_measurements
+                WHERE route_public_id = %s AND status = 'ok'
+                ORDER BY measured_at DESC
+                LIMIT 1000
+            ) recent_measurements
+            ORDER BY measured_at
+            """,
+            (public_id,),
+        ).fetchall()
+        route = public_route(row)
+        route['measurements'] = [
+            {
+                'measuredAt': measurement['measured_at'].isoformat(),
+                'durationSeconds': measurement['duration_seconds'],
+                'distanceMeters': measurement['distance_meters'],
+            }
+            for measurement in measurements
+        ]
+        return route
 
 
 def touch_route(public_id):

@@ -44,9 +44,31 @@ h2 { margin-bottom: 0; font-family: Georgia, serif; font-size: 38px; font-weight
 .route-summary small { color: #6e7971; font-size: 12px; }
 .route-summary-loading { color: #6e7971; font-size: 13px; }
 .route-summary-error { border: 1px solid #f0b5a6; background: #fff3ef; color: #8e4436; font-size: 12px; line-height: 1.4; }
+.analytics-card { max-width: 1180px; margin: 28px auto 0; padding: 38px; overflow: hidden; border: 1px solid #37544b; border-radius: 28px; background: #f7f4ed; color: #1a2925; box-shadow: 0 28px 90px #07100d66; }
+.analytics-card .eyebrow { color: #6c8d6c; }
+.analytics-heading { display: flex; gap: 24px; align-items: flex-start; justify-content: space-between; }
+.measurement-count { flex: 0 0 auto; padding: 8px 12px; border-radius: 99px; background: #e5eddf; color: #315b51; font-size: 12px; font-weight: 800; }
+.analytics-empty { margin: 32px 0 0; padding: 28px; border: 1px dashed #b9c7b4; border-radius: 18px; background: #eef3e9; color: #5f6f64; line-height: 1.5; text-align: center; }
+.chart-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 28px 0 18px; }
+.chart-stats div { display: grid; gap: 6px; padding: 14px 16px; border-radius: 14px; background: #e5eddf; }
+.chart-stats span { color: #6e7971; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.chart-stats strong { color: #1a2925; font-size: 18px; }
+.duration-chart-scroll { width: 100%; overflow-x: auto; }
+.duration-chart { display: block; width: 100%; min-width: 680px; height: auto; }
+.chart-grid-line { stroke: #d6ddd1; stroke-width: 1; }
+.chart-tick-line { stroke: #96a493; stroke-width: 1; }
+.chart-axis-label { fill: #6e7971; font-size: 11px; }
+.chart-axis-title { fill: #526159; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.chart-area { fill: url(#duration-area); }
+.chart-line { fill: none; stroke: #d8664e; stroke-linecap: round; stroke-linejoin: round; stroke-width: 4; }
+.chart-point { fill: #d8664e; stroke: #f7f4ed; stroke-width: 3; }
 @media (max-width: 800px) {
   .page-shell { padding: 44px 16px 60px; }
   .workspace { grid-template-columns: 1fr; }
   .map-picker { min-height: 380px; }
   .route-panel { padding: 32px 24px; }
+  .analytics-card { padding: 28px 20px; border-radius: 22px; }
+  .analytics-heading { align-items: center; }
+  .analytics-heading h2 { font-size: 32px; }
+  .chart-stats { grid-template-columns: repeat(2, 1fr); }
 }
