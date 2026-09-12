@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { DurationChart, type DurationMeasurement } from './components/DurationChart'
 import { MapPicker, type RouteSummary } from './components/MapPicker'
 import type { Point, RouteDraft } from './types'
 
@@ -9,6 +10,7 @@ type StoredRoute = {
   publicId: string
   origin: Point
   destination: Point
+  measurements: DurationMeasurement[]
 }
 
 const formatPoint = (point: Point | null) => {
@@ -17,6 +19,7 @@ const formatPoint = (point: Point | null) => {
 }
 
 export function App() {
+  const sharedRouteId = window.location.pathname.match(routePathPattern)?.[1] ?? null
   const [draft, setDraft] = useState<RouteDraft>({ origin: null, destination: null })
   const [selection, setSelection] = useState<'origin' | 'destination'>('origin')
   const [routeLink, setRouteLink] = useState<string | null>(null)
@@ -25,6 +28,7 @@ export function App() {
   const [routeError, setRouteError] = useState<string | null>(null)
   const [linkError, setLinkError] = useState<string | null>(null)
   const [linkLoading, setLinkLoading] = useState(false)
+  const [storedRoute, setStoredRoute] = useState<StoredRoute | null>(null)
 
   const choosePoint = (point: Point) => {
     setDraft((current) => ({ ...current, [selection]: point }))
@@ -32,17 +36,17 @@ export function App() {
   }
 
   useEffect(() => {
-    const match = window.location.pathname.match(routePathPattern)
-    if (!match) return
+    if (!sharedRouteId) return
 
     let cancelled = false
-    fetch(`${API_BASE_URL}/api/routes/${match[1]}`)
+    fetch(`${API_BASE_URL}/api/routes/${sharedRouteId}`)
       .then(async (response) => {
         if (!response.ok) throw new Error((await response.json().catch(() => null))?.error || `HTTP ${response.status}`)
         return response.json() as Promise<StoredRoute>
       })
       .then((route) => {
         if (cancelled) return
+        setStoredRoute(route)
         setDraft({ origin: route.origin, destination: route.destination })
         setRouteLink(window.location.href)
         setSelection('origin')
@@ -52,7 +56,7 @@ export function App() {
       })
 
     return () => { cancelled = true }
-  }, [])
+  }, [sharedRouteId])
 
   const createRoute = async () => {
     if (!draft.origin || !draft.destination || linkLoading) return
@@ -158,6 +162,8 @@ export function App() {
           )}
         </aside>
       </section>
+
+      {sharedRouteId && storedRoute && <DurationChart measurements={storedRoute.measurements ?? []} />}
     </main>
   )
 }
