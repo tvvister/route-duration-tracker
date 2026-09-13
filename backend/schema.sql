@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS routes (
     origin_lng DOUBLE PRECISION NOT NULL,
     destination_lat DOUBLE PRECISION NOT NULL,
     destination_lng DOUBLE PRECISION NOT NULL,
+    avoid_tolls BOOLEAN NOT NULL DEFAULT FALSE,
     provider TEXT NOT NULL DEFAULT 'google_routes',
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     last_viewed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -18,6 +19,7 @@ CREATE TABLE IF NOT EXISTS routes (
 
 ALTER TABLE routes ADD COLUMN IF NOT EXISTS provider TEXT NOT NULL DEFAULT 'google_routes';
 ALTER TABLE routes ADD COLUMN IF NOT EXISTS last_checked_at TIMESTAMPTZ;
+ALTER TABLE routes ADD COLUMN IF NOT EXISTS avoid_tolls BOOLEAN NOT NULL DEFAULT FALSE;
 
 CREATE INDEX IF NOT EXISTS routes_last_viewed_at_idx ON routes (last_viewed_at);
 CREATE INDEX IF NOT EXISTS routes_last_checked_at_idx ON routes (last_checked_at);

@@ -10,6 +10,7 @@ type StoredRoute = {
   publicId: string
   origin: Point
   destination: Point
+  avoidTolls: boolean
   measurements: DurationMeasurement[]
 }
 
@@ -22,6 +23,7 @@ export function App() {
   const sharedRouteId = window.location.pathname.match(routePathPattern)?.[1] ?? null
   const [draft, setDraft] = useState<RouteDraft>({ origin: null, destination: null })
   const [selection, setSelection] = useState<'origin' | 'destination'>('origin')
+  const [avoidTolls, setAvoidTolls] = useState(false)
   const [routeLink, setRouteLink] = useState<string | null>(null)
   const [routeSummary, setRouteSummary] = useState<RouteSummary | null>(null)
   const [routeLoading, setRouteLoading] = useState(false)
@@ -48,6 +50,7 @@ export function App() {
         if (cancelled) return
         setStoredRoute(route)
         setDraft({ origin: route.origin, destination: route.destination })
+        setAvoidTolls(Boolean(route.avoidTolls))
         setRouteLink(window.location.href)
         setSelection('origin')
       })
@@ -66,7 +69,11 @@ export function App() {
       const response = await fetch(`${API_BASE_URL}/api/routes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ origin: draft.origin, destination: draft.destination }),
+        body: JSON.stringify({
+          origin: draft.origin,
+          destination: draft.destination,
+          avoidTolls,
+        }),
       })
       const payload = await response.json().catch(() => null)
       if (!response.ok) throw new Error(payload?.error || `HTTP ${response.status}`)
@@ -99,6 +106,7 @@ export function App() {
             selection={selection}
             origin={draft.origin}
             destination={draft.destination}
+            avoidTolls={avoidTolls}
             onSelect={choosePoint}
             onRouteUpdate={(summary, loading, error) => {
               setRouteSummary(summary)
@@ -139,6 +147,18 @@ export function App() {
             </button>
           </div>
 
+          <label className="route-option">
+            <input
+              type="checkbox"
+              checked={avoidTolls}
+              onChange={(event) => setAvoidTolls(event.target.checked)}
+            />
+            <span>
+              <strong>Избегать платных дорог</strong>
+              <small>Google выберет бесплатный путь, если есть разумная альтернатива.</small>
+            </span>
+          </label>
+
           <button className="primary-button" type="button" onClick={createRoute} disabled={!draft.origin || !draft.destination || linkLoading}>
             {linkLoading ? 'Creating route link…' : 'Generate route link'}
           </button>
@@ -146,7 +166,7 @@ export function App() {
           {routeLoading && <div className="route-summary route-summary-loading">Рассчитываем маршрут на машине…</div>}
           {routeSummary && (
             <div className="route-summary" role="status">
-              <span>На машине</span>
+              <span>{avoidTolls ? 'На машине · без платных дорог' : 'На машине'}</span>
               <strong>{routeSummary.duration}</strong>
               {routeSummary.distance && <small>{routeSummary.distance}</small>}
             </div>

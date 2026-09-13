@@ -46,11 +46,13 @@ class WorkerTests(unittest.TestCase):
             'origin_lng': 37.61,
             'destination_lat': 55.76,
             'destination_lng': 37.62,
+            'avoid_tolls': True,
         }
         result = request_route_measurement(route, 'test-key', open_url=open_url)
 
         self.assertEqual(result, (901, 12345))
         self.assertEqual(captured['payload']['routingPreference'], 'TRAFFIC_AWARE')
+        self.assertEqual(captured['payload']['routeModifiers'], {'avoidTolls': True})
         self.assertEqual(captured['field_mask'], 'routes.duration,routes.distanceMeters')
         self.assertGreater(captured['timeout'], 0)
 

@@ -5,6 +5,7 @@ type MapPickerProps = {
   selection: 'origin' | 'destination'
   origin: Point | null
   destination: Point | null
+  avoidTolls: boolean
   onSelect: (point: Point) => void
   onRouteUpdate: (route: RouteSummary | null, loading: boolean, error: string | null) => void
 }
@@ -33,6 +34,7 @@ async function computeRouteWithDemoKey(
   apiKey: string,
   origin: Point,
   destination: Point,
+  avoidTolls: boolean,
   signal: AbortSignal,
 ): Promise<RoutesApiRoute> {
   const response = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
@@ -54,6 +56,7 @@ async function computeRouteWithDemoKey(
       destination: { location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } } },
       travelMode: 'DRIVE',
       routingPreference: 'TRAFFIC_UNAWARE',
+      routeModifiers: { avoidTolls },
       languageCode: 'ru-RU',
       units: 'METRIC',
     }),
@@ -141,7 +144,7 @@ function createMarkerContent(label: string, variant: 'origin' | 'destination') {
   return element
 }
 
-export function MapPicker({ selection, origin, destination, onSelect, onRouteUpdate }: MapPickerProps) {
+export function MapPicker({ selection, origin, destination, avoidTolls, onSelect, onRouteUpdate }: MapPickerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<GoogleMapHandle | null>(null)
   const markersRef = useRef<GoogleMarkerHandle[]>([])
@@ -230,7 +233,7 @@ export function MapPicker({ selection, origin, destination, onSelect, onRouteUpd
     let cancelled = false
     const controller = new AbortController()
     onRouteUpdate(null, true, null)
-    computeRouteWithDemoKey(apiKey, origin, destination, controller.signal).then((route) => {
+    computeRouteWithDemoKey(apiKey, origin, destination, avoidTolls, controller.signal).then((route) => {
       if (cancelled) return
       const encodedPolyline = route.polyline?.encodedPolyline
       if (!encodedPolyline) {
@@ -262,7 +265,7 @@ export function MapPicker({ selection, origin, destination, onSelect, onRouteUpd
       controller.abort()
       clearRoute()
     }
-  }, [origin, destination, status])
+  }, [origin, destination, avoidTolls, status])
 
   useEffect(() => {
     const map = mapRef.current

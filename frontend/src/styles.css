@@ -34,6 +34,12 @@ h2 { margin-bottom: 0; font-family: Georgia, serif; font-size: 38px; font-weight
 .point-number { display: grid; flex: 0 0 30px; height: 30px; place-items: center; border-radius: 50%; background: #315b51; color: #fff; font-size: 13px; font-weight: 800; }
 .point-row strong, .point-row small { display: block; }
 .point-row small { margin-top: 4px; color: #6e7971; font-size: 12px; }
+.route-option { display: flex; gap: 12px; align-items: flex-start; padding: 15px; border: 1px solid #d2d8cc; border-radius: 15px; background: #fff; cursor: pointer; }
+.route-option input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: #315b51; cursor: pointer; }
+.route-option span { display: grid; gap: 4px; }
+.route-option strong { font-size: 14px; }
+.route-option small { color: #6e7971; font-size: 12px; line-height: 1.4; }
+.route-option:has(input:checked) { border-color: #6c8d6c; background: #e5eddf; }
 .primary-button { margin-top: auto; padding: 16px 20px; border: 0; border-radius: 12px; background: #d8664e; color: #fff; font-weight: 800; cursor: pointer; }
 .primary-button:disabled { background: #c8cec3; cursor: not-allowed; }
 .share-box { display: grid; gap: 8px; padding: 14px; border-radius: 12px; background: #e5eddf; color: #315b51; font-size: 12px; }

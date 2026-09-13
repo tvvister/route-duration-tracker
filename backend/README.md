@@ -18,7 +18,8 @@ The server listens on `http://localhost:8080` by default. The schema is applied 
 
 Endpoints:
 
-- `POST /api/routes` — save coordinates and return a Docker-style `publicId`.
+- `POST /api/routes` — save coordinates and the optional boolean `avoidTolls`, then
+  return a Docker-style `publicId`.
 - `GET /api/routes/:publicId` — retrieve coordinates and up to 1,000 recent
   successful duration measurements, then update `last_viewed_at`.
 - `POST /api/routes/:publicId/view` — update `last_viewed_at`.
