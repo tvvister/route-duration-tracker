@@ -101,6 +101,9 @@ def request_route_measurement(route, api_key, open_url=None):
         },
         'travelMode': 'DRIVE',
         'routingPreference': 'TRAFFIC_AWARE',
+        'routeModifiers': {
+            'avoidTolls': bool(route.get('avoid_tolls', False)),
+        },
         'units': 'METRIC',
     }
     request = Request(
@@ -164,7 +167,7 @@ def active_routes():
     with psycopg.connect(DATABASE_URL, row_factory=dict_row) as connection:
         return connection.execute(
             """
-            SELECT public_id, origin_lat, origin_lng, destination_lat, destination_lng
+            SELECT public_id, origin_lat, origin_lng, destination_lat, destination_lng, avoid_tolls
             FROM routes
             WHERE provider = 'google_routes'
               AND last_viewed_at >= now() - (%s * interval '1 day')

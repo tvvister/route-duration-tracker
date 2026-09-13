@@ -40,6 +40,7 @@ def public_route(row):
         'publicId': row['public_id'],
         'origin': {'latitude': row['origin_lat'], 'longitude': row['origin_lng']},
         'destination': {'latitude': row['destination_lat'], 'longitude': row['destination_lng']},
+        'avoidTolls': row.get('avoid_tolls', False),
         'createdAt': row['created_at'].isoformat(),
         'lastViewedAt': row['last_viewed_at'].isoformat(),
         'lastCheckedAt': last_checked_at.isoformat() if last_checked_at else None,
@@ -61,6 +62,14 @@ def validate_point(value, field_name):
     return latitude, longitude
 
 
+def validate_avoid_tolls(value):
+    if value is None:
+        return False
+    if not isinstance(value, bool):
+        raise ValueError('avoidTolls must be a boolean.')
+    return value
+
+
 def generate_route_id(connection):
     for _ in range(100):
         candidate = f'{random.choice(ADJECTIVES)}_{random.choice(NAMES)}'
@@ -69,17 +78,19 @@ def generate_route_id(connection):
     raise RuntimeError('Could not generate a unique route ID.')
 
 
-def create_route(origin, destination):
+def create_route(origin, destination, avoid_tolls=False):
     with psycopg.connect(DATABASE_URL, row_factory=dict_row) as connection:
         public_id = generate_route_id(connection)
         row = connection.execute(
             """
-            INSERT INTO routes (public_id, origin_lat, origin_lng, destination_lat, destination_lng)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO routes (
+                public_id, origin_lat, origin_lng, destination_lat, destination_lng, avoid_tolls
+            )
+            VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING public_id, origin_lat, origin_lng, destination_lat, destination_lng,
-                      created_at, last_viewed_at, last_checked_at
+                      avoid_tolls, created_at, last_viewed_at, last_checked_at
             """,
-            (public_id, origin[0], origin[1], destination[0], destination[1]),
+            (public_id, origin[0], origin[1], destination[0], destination[1], avoid_tolls),
         ).fetchone()
         return public_route(row)
 
@@ -92,7 +103,7 @@ def get_route(public_id):
             SET last_viewed_at = %s
             WHERE public_id = %s
             RETURNING public_id, origin_lat, origin_lng, destination_lat, destination_lng,
-                      created_at, last_viewed_at, last_checked_at
+                      avoid_tolls, created_at, last_viewed_at, last_checked_at
             """,
             (utc_now(), public_id),
         ).fetchone()
@@ -211,9 +222,10 @@ class RouteHandler(BaseHTTPRequestHandler):
                 body = self._read_json()
                 origin = validate_point(body.get('origin'), 'origin')
                 destination = validate_point(body.get('destination'), 'destination')
+                avoid_tolls = validate_avoid_tolls(body.get('avoidTolls'))
                 if origin == destination:
                     raise ValueError('origin and destination must be different points.')
-                self._send_json(201, create_route(origin, destination))
+                self._send_json(201, create_route(origin, destination, avoid_tolls))
                 return
             match = VIEW_PATTERN.fullmatch(pathname)
             if match:
